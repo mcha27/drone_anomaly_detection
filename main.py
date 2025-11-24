@@ -1,20 +1,24 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-import joblib
 import numpy as np
+import joblib
 
 app = FastAPI()
 
-# Load model
-model = joblib.load("xgb_model.pkl")
+pipeline = joblib.load("anomaly_detection_pipeline.pkl")
 
-# Input schema
-class InputData(BaseModel):
-    features: list
+class DroneTraffic(BaseModel):
+    features: dict  
 
 @app.post("/predict")
-def predict(data: InputData):
-    X = np.array(data.features).reshape(1, -1)
-    prediction = model.predict(X)
-    return {"prediction": int(prediction[0])}
- 
+def predict(data: DroneTraffic):
+    import pandas as pd
+    df = pd.DataFrame([data.features])
+
+    pred_proba = pipeline.predict_proba(df)[0][1]
+    pred = int(pred_proba > 0.5)
+
+    return {
+        "prediction": pred,
+        "probability_malicious": float(pred_proba)
+    }

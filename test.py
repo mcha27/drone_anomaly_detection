@@ -1,12 +1,30 @@
 import requests
+import pandas as pd
+import time
 
-response = requests.post(
-    "http://127.0.0.1:8000/predict",
-    json={"features": [1.11176686, -0.7030876,  -0.08564046, -0.56680217, -1.06881346, -0.12543485,
- -0.47733697,  0.45650818, -0.11944257, -0.65839588,  0.56834041,  0.51279738,
-  0.18098738, -0.68631946, -0.62612161, -0.51362942,  0.95000485,  0.0029277,
- -1.14935443,  1.09278317, -0.17788938,  0.20246466, -0.07416906,  0.01002401,
-  0.39503865]}
-)
+# Load your dataset
+df = pd.read_csv("script_dataset.csv")
 
-print(response.json())
+url = "http://127.0.0.1:8000/predict"
+
+results = []
+
+for idx, row in df.iterrows():
+    payload = {
+        "features": row.to_dict() 
+    }
+    response = requests.post(url, json=payload)
+    try:
+        pred = response.json()
+    except Exception as e:
+        print(f"Error on row {idx}: {e}")
+        continue
+
+    print(f"Row {idx}: {pred}")
+    results.append(pred)
+    time.sleep(0.05)
+    
+results_df = pd.DataFrame(results)
+results_df.to_csv("prediction_results.csv", index=False)
+
+print("\nSaved predictions to prediction_results.csv")
