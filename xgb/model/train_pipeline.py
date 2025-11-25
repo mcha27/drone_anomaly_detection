@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -7,7 +8,8 @@ from sklearn.decomposition import PCA
 from xgboost import XGBClassifier
 import joblib
 
-df = pd.read_csv("model_dataset.csv")
+path = os.path.abspath('..') + '/' + "datasets/model_dataset.csv"
+df = pd.read_csv(path)
 
 attack_cols = ['label_spoofing', 'label_mitm', 'label_ddos', 'label_gps_spoofing', 'label_malware', 'label_jamming', 'label_protocol_exploit']
 df = df.drop(['timestamp', 'drone_gps_coordinates', 'label_normal'], axis=1)

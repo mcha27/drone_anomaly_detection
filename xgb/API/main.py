@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from pydantic import BaseModel
 import numpy as np
@@ -5,7 +6,8 @@ import joblib
 
 app = FastAPI()
 
-pipeline = joblib.load("anomaly_detection_pipeline.pkl")
+path = os.path.abspath('..') + '/' + "model/anomaly_detection_pipeline.pkl"
+pipeline = joblib.load(path)
 
 class DroneTraffic(BaseModel):
     features: dict  

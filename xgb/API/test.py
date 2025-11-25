@@ -1,9 +1,10 @@
 import requests
 import pandas as pd
 import time
+import os 
 
-# Load your dataset
-df = pd.read_csv("script_dataset.csv")
+path = os.path.abspath('..') + '/' + "datasets/script_dataset.csv"
+df = pd.read_csv(path)
 
 url = "http://127.0.0.1:8000/predict"
 
@@ -22,8 +23,8 @@ for idx, row in df.iterrows():
 
     print(f"Row {idx}: {pred}")
     results.append(pred)
-    time.sleep(0.05)
-    
+    time.sleep(0.05) # spaced out network comms from overloading the API
+
 results_df = pd.DataFrame(results)
 results_df.to_csv("prediction_results.csv", index=False)
 
