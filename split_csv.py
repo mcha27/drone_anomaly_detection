@@ -1,14 +1,15 @@
 import pandas as pd
 import sys
+import os
 
 def split_csv(input_file, output_file1='part1.csv', output_file2='part2.csv'):
     """
-    Split a CSV file into two equal parts (50/50).
+    Split a CSV file into two parts (75/25).
     
     Args:
         input_file: Path to the input CSV file
-        output_file1: Path for the first output CSV (default: part1.csv)
-        output_file2: Path for the second output CSV (default: part2.csv)
+        output_file1: Path for the first output CSV (75% of data, default: part1.csv)
+        output_file2: Path for the second output CSV (25% of data, default: part2.csv)
     """
     try:
         # Read the CSV file
@@ -18,8 +19,8 @@ def split_csv(input_file, output_file1='part1.csv', output_file2='part2.csv'):
         total_rows = len(df)
         print(f"Total rows: {total_rows}")
         
-        # Calculate split point
-        split_point = total_rows // 2
+        # Calculate split point (75% for first file)
+        split_point = int(total_rows * 0.97)
         
         # Split the dataframe
         df1 = df.iloc[:split_point]
@@ -30,8 +31,8 @@ def split_csv(input_file, output_file1='part1.csv', output_file2='part2.csv'):
         df2.to_csv(output_file2, index=False)
         
         print(f"\nSplit complete!")
-        print(f"{output_file1}: {len(df1)} rows")
-        print(f"{output_file2}: {len(df2)} rows")
+        print(f"{output_file1}: {len(df1)} rows ({len(df1)/total_rows*100:.1f}%)")
+        print(f"{output_file2}: {len(df2)} rows ({len(df2)/total_rows*100:.1f}%)")
         
     except FileNotFoundError:
         print(f"Error: File '{input_file}' not found.")
@@ -48,7 +49,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     input_file = sys.argv[1]
-    output_file1 = sys.argv[2] if len(sys.argv) > 2 else 'part1.csv'
-    output_file2 = sys.argv[3] if len(sys.argv) > 3 else 'part2.csv'
-    
+    output_file1 = sys.argv[2] if len(sys.argv) > 2 else 'model_dataset.csv'
+    output_file2 = sys.argv[3] if len(sys.argv) > 3 else 'script_dataset.csv'
+
     split_csv(input_file, output_file1, output_file2)

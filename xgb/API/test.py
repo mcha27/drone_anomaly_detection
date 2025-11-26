@@ -10,6 +10,8 @@ url = "http://127.0.0.1:8000/predict"
 
 results = []
 
+print(df)
+
 for idx, row in df.iterrows():
     payload = {
         "features": row.to_dict() 
