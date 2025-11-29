@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import time
 import os
+import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.decomposition import PCA
 
@@ -39,10 +40,27 @@ for idx, row in enumerate(X_pca):
         print(f"Error on row {idx}: {e}")
         continue
     print(f"Row {idx}: {pred}")
-    results.append(pred)
+    if pred == 1:
+        results.append([idx, pred])
     time.sleep(0.05) # spaced
 
-results_df = pd.DataFrame(results)
-results_df.to_csv("kmeans_results.csv", index=False)
+rows_with_ones = [row for row in results if row[1] == 1]
+
+# Count how many 1s
+count_ones = len(rows_with_ones)
+
+# Create DataFrame
+df_output = pd.DataFrame(rows_with_ones, columns=["row_index", "label"])
+
+# Add count row on top
+df_output.loc[-1] = ["COUNT", count_ones]
+df_output.index = df_output.index + 1
+df_output = df_output.sort_index()
+
+# Save to CSV
+df_output.to_csv("rows_with_ones_output.csv", index=False)
+
+print("Saved rows_with_ones_output.csv")
+np.savetxt("kmeans_results.csv", rows_with_ones, delimiter=",", fmt="%d")
 
 print("\nSaved predictions to kmeans_results.csv")

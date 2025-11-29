@@ -19,6 +19,7 @@ def predict(data: DroneTraffic):
 
     pred_proba = pipeline.predict_proba(df)[0][1]
     pred = int(pred_proba > 0.5)
+    
 
     return {
         "prediction": pred,

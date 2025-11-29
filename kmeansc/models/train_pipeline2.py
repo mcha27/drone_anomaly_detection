@@ -29,8 +29,9 @@ X_scaled = scaler.fit_transform(df)
 pca = PCA(n_components=0.95)
 X_pca = pca.fit_transform(X_scaled)
 
-k = 2
+k = 8
 kmeans = KMeans(n_clusters=k, random_state=42)
 kmeans.fit(X_pca)
 
 joblib.dump(kmeans, 'kmeans_model.pkl')
+print("Model saved successfully.")
