@@ -40,27 +40,12 @@ for idx, row in enumerate(X_pca):
         print(f"Error on row {idx}: {e}")
         continue
     print(f"Row {idx}: {pred}")
-    if pred == 1:
-        results.append([idx, pred])
+    results.append([idx, pred])
     time.sleep(0.05) # spaced
 
-rows_with_ones = [row for row in results if row[1] == 1]
+results_df = pd.DataFrame(results)
+results_df.to_csv("prediction_results.csv", index=False)
 
-# Count how many 1s
-count_ones = len(rows_with_ones)
-
-# Create DataFrame
-df_output = pd.DataFrame(rows_with_ones, columns=["row_index", "label"])
-
-# Add count row on top
-df_output.loc[-1] = ["COUNT", count_ones]
-df_output.index = df_output.index + 1
-df_output = df_output.sort_index()
-
-# Save to CSV
-df_output.to_csv("rows_with_ones_output.csv", index=False)
-
-print("Saved rows_with_ones_output.csv")
-np.savetxt("kmeans_results.csv", rows_with_ones, delimiter=",", fmt="%d")
+print("\nSaved predictions to prediction_results.csv")
 
 print("\nSaved predictions to kmeans_results.csv")

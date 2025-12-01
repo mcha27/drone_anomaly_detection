@@ -1,10 +1,12 @@
 CIS600 IoT Security and Privacy Final Project
 
-
 Comparative Analysis of Supervised and Unsupervised Learning for Drone Anomaly Detection
 
 to run API:
-uvicorn main:app --reload
-if this error: ERROR:    [Errno 98] Address already in use
-        sudo lsof -i :8000
-        kill -9 <PID>
+- go to xgb or kmeans
+- go to API
+- type this into terminal: uvicorn main:app --reload
+- separate terminal, type: python3 test.py
+- see results in CSV file.
+
+Notes: make sure python environment is activated.

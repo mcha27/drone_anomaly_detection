@@ -8,28 +8,43 @@ from sklearn.decomposition import PCA
 path = os.path.abspath("..") + '/' + "datasets/model_dataset.csv"
 df = pd.read_csv(path)
 
-attack_cols = ['label_spoofing', 'label_mitm', 'label_ddos', 'label_gps_spoofing',
-               'label_gps_spoofing', 'label_malware', 'label_jamming', 'label_protocol_exploit']
+path = os.path.abspath('..') + '/' + "datasets/model_dataset.csv"
+df = pd.read_csv(path)
+    
+attack_cols = [
+    'label_spoofing', 'label_mitm', 'label_ddos',
+    'label_gps_spoofing', 'label_malware',
+    'label_jamming', 'label_protocol_exploit'
+]
+
+df['anomaly_true'] = df[attack_cols].max(axis=1)
 
 df = df.drop(['timestamp', 'drone_gps_coordinates', 'label_normal'], axis=1)
-df['anomaly'] = df[attack_cols].max(axis=1)
 df = df.drop(columns=attack_cols)
-df = df.drop(columns=['anomaly'])
 
-categorical = ['communication_protocol', 'encryption_type']
-numeric = [col for col in df.columns if col not in categorical]
+categorical_cols = ['communication_protocol', 'encryption_type']
 
 encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
-encoded_features = encoder.fit_transform(df[['communication_protocol', 'encryption_type']])
-encoded_df = pd.DataFrame(encoded_features, columns=encoder.get_feature_names_out(['communication_protocol', 'encryption_type']))
-df = pd.concat([df.drop(['communication_protocol', 'encryption_type'], axis=1), encoded_df], axis=1)
+encoded = encoder.fit_transform(df[categorical_cols])
+encoded_df = pd.DataFrame(
+    encoded,
+    columns=encoder.get_feature_names_out(categorical_cols)
+)
+
+df = pd.concat([df.drop(columns=categorical_cols), encoded_df], axis=1)
+
+y_true = df['anomaly_true'].values
+
+df = df.drop(columns=['anomaly_true'])
+
 
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(df)
+
 pca = PCA(n_components=0.95)
 X_pca = pca.fit_transform(X_scaled)
 
-k = 8
+k = 8  # normal vs anomaly
 kmeans = KMeans(n_clusters=k, random_state=42)
 kmeans.fit(X_pca)
 

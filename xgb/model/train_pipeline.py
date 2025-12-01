@@ -13,12 +13,11 @@ df = pd.read_csv(path)
 
 attack_cols = ['label_spoofing', 'label_mitm', 'label_ddos', 'label_gps_spoofing', 'label_malware', 'label_jamming', 'label_protocol_exploit']
 df = df.drop(['timestamp', 'drone_gps_coordinates', 'label_normal'], axis=1)
-df['anomaly'] = df[attack_cols].max(axis=1)
-df = df.drop(columns=attack_cols)
+features = df.columns.to_numpy()
+features = np.delete(features, -1)
 
-y = df["anomaly"]
-
-X = df.drop(columns=["anomaly"])
+X = df[features]
+y = df[attack_cols].values
 
 categorical_cols = ["communication_protocol", "encryption_type"]
 numeric_cols = [col for col in X.columns if col not in categorical_cols]
